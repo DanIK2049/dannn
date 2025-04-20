@@ -1,14 +1,13 @@
 <!DOCTYPE html>
-
 <html lang="ru">
 <head>
-    <link rel="stylesheet" href="responsive.css">
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Тест тапсыру </title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Тест тапсыру</title>
+  <link rel="stylesheet" href="responsive.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
     body {
       font-family: 'Segoe UI', sans-serif;
       background-color: #f0f4f3;
@@ -62,11 +61,12 @@
     .answer {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-    }
-
-    label {
+      gap: 10px;
+      padding: 10px;
+      border-radius: 6px;
+      background-color: #f1f1f1;
       font-size: 1rem;
+      cursor: pointer;
     }
 
     button {
@@ -102,7 +102,7 @@
       max-width: 1000px;
       margin: 2rem auto;
       padding: 60px;
-      background-color:rgb(255, 255, 255);
+      background-color: white;
       border: 6px double #2e7d32;
       text-align: center;
       font-family: Georgia, serif;
@@ -125,115 +125,44 @@
       font-size: 16px;
     }
   </style>
-<style>
-body {
-  font-family: 'Segoe UI', sans-serif;
-  background: #f0fdf4;
-  color: #1b5e20;
-  margin: 0;
-  padding: 0;
-}
-header, footer {
-  background-color: #a5d6a7;
-  padding: 10px;
-  text-align: center;
-  font-weight: bold;
-}
-.container {
-  max-width: 900px;
-  margin: 20px auto;
-  background: #ffffff;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.05);
-}
-button {
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 6px;
-  margin-top: 10px;
-  cursor: pointer;
-}
-button:hover {
-  background-color: #388e3c;
-}
-</style>
-
-<style>
-body {
-  font-family: 'Segoe UI', sans-serif;
-  background: #f1fdf3;
-  color: #1b5e20;
-  margin: 0;
-  padding: 0;
-}
-header, footer {
-  background-color: #a5d6a7;
-  padding: 10px;
-  text-align: center;
-  font-weight: bold;
-}
-.container {
-  max-width: 960px;
-  margin: 40px auto;
-  background: #ffffff;
-  padding: 30px;
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-}
-button {
-  background-color: #43a047;
-  color: white;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 6px;
-  margin-top: 10px;
-  cursor: pointer;
-}
-button:hover {
-  background-color: #2e7d32;
-}
-</style>
 </head>
 <body>
-<div class="container">
-<h1>Тест тапсыру</h1>
-<div class="test-selection">
-<h2>Тест түрін таңдаңыз</h2>
-<select id="test-select" onchange="loadTest()">
-<option value="">Тест түрін таңдаңыз</option>
-</select>
-</div>
-<div id="test-form"></div>
-<div id="certificate">
-<h1 style="color: #2e7d32; font-size: 32px; margin-bottom: 20px;">СЕРТИФИКАТ</h1>
-<p style="font-size: 20px; margin-bottom: 40px;">Осы СЕРТИФИКАТ</p>
-<p id="cert-name" style="font-size: 26px; font-weight: bold; margin-bottom: 20px;"></p>
-<p style="font-size: 20px;">Курсты сәтті аяқтағанын білдіреді</p>
-<p id="cert-course" style="font-size: 22px; font-style: italic; margin-bottom: 40px;"></p>
-<p style="font-size: 18px;">Тапсырылған күні: <span id="cert-date"></span></p>
-<div id="cert-buttons">
-<button onclick="downloadCertificate()">Сертификат жүктеу</button>
-<button onclick="returnHome()">Басты бетке оралу</button>
-</div>
-<div class="signature">
+  <div class="container">
+    <h1>Тест тапсыру</h1>
+    <div class="test-selection">
+      <h2>Тест түрін таңдаңыз</h2>
+      <select id="test-select" onchange="loadTest()">
+        <option value="">Тест түрін таңдаңыз</option>
+      </select>
+    </div>
+    <div id="test-form"></div>
+
+    <div id="certificate">
+      <h1 style="color: #2e7d32; font-size: 32px; margin-bottom: 20px;">СЕРТИФИКАТ</h1>
+      <p style="font-size: 20px; margin-bottom: 40px;">Осы СЕРТИФИКАТ</p>
+      <p id="cert-name" style="font-size: 26px; font-weight: bold; margin-bottom: 20px;"></p>
+      <p style="font-size: 20px;">Курсты сәтті аяқтағанын білдіреді</p>
+      <p id="cert-course" style="font-size: 22px; font-style: italic; margin-bottom: 40px;"></p>
+      <p style="font-size: 18px;">Тапсырылған күні: <span id="cert-date"></span></p>
+      <div id="cert-buttons">
+        <button onclick="downloadCertificate()">Сертификат жүктеу</button>
+        <button onclick="returnHome()">Басты бетке оралу</button>
+      </div>
+      <div class="signature">
         ____________________<br/>
-<span style="font-style: italic;">Мұғалімнің қолтаңбасы</span>
-</div>
-</div>
-</div>
-<script>
+        <span style="font-style: italic;">Мұғалімнің қолтаңбасы</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
     let studentName = "";
     let testData = [];
 
     function loadTests() {
       const allTests = JSON.parse(localStorage.getItem("tests")) || [];
       const testSelect = document.getElementById("test-select");
-
       testSelect.innerHTML = "<option value=''>Тест түрін таңдаңыз</option>";
-
       allTests.forEach((test, index) => {
         const option = document.createElement("option");
         option.value = index;
@@ -270,19 +199,17 @@ button:hover {
         answersDiv.className = "answers";
 
         question.answers.forEach((answer, j) => {
-          const answerDiv = document.createElement("div");
-          answerDiv.className = "answer";
+          const label = document.createElement("label");
+          label.className = "answer";
 
           const input = document.createElement("input");
           input.type = "radio";
           input.name = `q${i}`;
           input.value = j;
-          const label = document.createElement("label");
-          label.textContent = answer;
 
-          answerDiv.appendChild(input);
-          answerDiv.appendChild(label);
-          answersDiv.appendChild(answerDiv);
+          label.appendChild(input);
+          label.appendChild(document.createTextNode(answer));
+          answersDiv.appendChild(label);
         });
 
         questionDiv.appendChild(answersDiv);
