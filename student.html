@@ -54,19 +54,25 @@
     .answer {
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 10px 14px;
+      gap: 8px;
+      padding: 10px 12px;
       border-radius: 8px;
       background-color: #f1f1f1;
       font-size: 1rem;
-      cursor: pointer;
       width: 100%;
       box-sizing: border-box;
     }
+    .answer input[type="radio"] {
+      margin: 0;
+      flex-shrink: 0;
+    }
     .answer span {
-      flex-grow: 1;
+      display: block;
       white-space: normal;
       word-break: break-word;
+      line-height: 1.4;
+      margin: 0;
+      flex: 1;
     }
     button {
       padding: 1rem 2rem;
@@ -202,9 +208,6 @@
 
           const span = document.createElement("span");
           span.textContent = answer;
-          span.style.flexGrow = "1";
-          span.style.whiteSpace = "normal";
-          span.style.wordBreak = "break-word";
 
           label.appendChild(input);
           label.appendChild(span);
@@ -228,7 +231,6 @@
       }
 
       const completedUsers = JSON.parse(localStorage.getItem("completedUsers") || "[]");
-
       if (completedUsers.includes(studentName.trim())) {
         alert("Сіз тестті сәтті тапсырдыңыз.");
         return;
@@ -266,16 +268,10 @@
 
     function showCertificate(course) {
       document.getElementById("test-form").style.display = "none";
-      const cert = document.getElementById("certificate");
-
-      document.getElementById("cert-name").innerText = `${studentName}`;
+      document.getElementById("cert-name").innerText = studentName;
       document.getElementById("cert-course").innerText = course;
-
-      const today = new Date();
-      const formattedDate = today.toLocaleDateString("ru-RU");
-      document.getElementById("cert-date").innerText = formattedDate;
-
-      cert.style.display = "block";
+      document.getElementById("cert-date").innerText = new Date().toLocaleDateString("ru-RU");
+      document.getElementById("certificate").style.display = "block";
     }
 
     function downloadCertificate() {
@@ -285,16 +281,10 @@
 
       html2canvas(cert, { scale: 2, useCORS: true }).then(canvas => {
         const imgData = canvas.toDataURL("image/png");
-
         const jsPDF = window.jspdf.jsPDF;
         const pdf = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
-
-        const pageWidth = pdf.internal.pageSize.getWidth();
-        const pageHeight = pdf.internal.pageSize.getHeight();
-
-        pdf.addImage(imgData, "PNG", 0, 0, pageWidth, pageHeight);
+        pdf.addImage(imgData, "PNG", 0, 0, pdf.internal.pageSize.getWidth(), pdf.internal.pageSize.getHeight());
         pdf.save("certificate.pdf");
-
         buttons.style.display = "block";
       });
     }
