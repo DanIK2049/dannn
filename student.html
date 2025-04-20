@@ -61,9 +61,8 @@
     .answer {
       display: flex;
       align-items: center;
-      justify-content: flex-start;
-      gap: 10px;
-      padding: 10px;
+      gap: 4px;
+      padding: 6px 8px;
       border-radius: 6px;
       background-color: #f1f1f1;
       font-size: 1rem;
@@ -212,8 +211,6 @@
 
           const span = document.createElement("span");
           span.textContent = answer;
-          span.style.flex = "1";
-          span.style.wordBreak = "break-word";
 
           label.appendChild(input);
           label.appendChild(span);
