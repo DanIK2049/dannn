@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+
+<html lang="kk">
+<head>
+    <link rel="stylesheet" href="responsive.css">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Контент редакторы</title>
+<style>
+    body {
+      font-family: sans-serif;
+      background: #f0f0f0;
+      padding: 30px;
+    }
+    .editor {
+      max-width: 800px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    select, textarea, button {
+      width: 100%;
+      margin-top: 10px;
+      font-size: 16px;
+      padding: 10px;
+    }
+    #contentArea {
+      min-height: 200px;
+      border: 1px solid #ccc;
+      padding: 10px;
+      background: #fff;
+      border-radius: 6px;
+    }
+  </style>
+<style>
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #f1fdf3;
+  color: #1b5e20;
+  margin: 0;
+  padding: 0;
+}
+header, footer {
+  background-color: #a5d6a7;
+  padding: 10px;
+  text-align: center;
+  font-weight: bold;
+}
+.container {
+  max-width: 960px;
+  margin: 40px auto;
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+button {
+  background-color: #43a047;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+button:hover {
+  background-color: #2e7d32;
+}
+</style>
+</head>
+<script>
+    const section = document.getElementById("section");
+    const contentArea = document.getElementById("contentArea");
+    const fileInput = document.getElementById("fileInput");
+
+    section.addEventListener("change", () => {
+      const data = JSON.parse(localStorage.getItem("eduContent") || "{}");
+      contentArea.innerHTML = data[section.value] || "";
+    });
+
+    function saveContent() {
+      const data = JSON.parse(localStorage.getItem("eduContent") || "{}");
+      data[section.value] = contentArea.innerHTML;
+      localStorage.setItem("eduContent", JSON.stringify(data));
+      alert("✅ Сақталды!");
+    }
+
+    fileInput.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const ext = file.name.split('.').pop().toLowerCase();
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        let html = "";
+        if (["jpg", "jpeg", "png", "gif", "webp"].includes(ext)) {
+          html = `<img src="${ev.target.result}" style="max-width:100%;"><br>`;
+        } else if (["mp4", "webm", "ogg"].includes(ext)) {
+          html = `<a href="${ev.target.result}" target="_blank">🎬 Видеоға өту</a><br>`;
+        } else {
+          html = `<a href="${ev.target.result}" download="${file.name}">📄 ${file.name}</a><br>`;
+        }
+        contentArea.innerHTML += html;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    function previewAll() {
+      const data = JSON.parse(localStorage.getItem("eduContent") || "{}");
+      let result = "";
+      for (const key in data) {
+        result += `<h3>${key}</h3>` + data[key];
+      }
+      const w = window.open();
+      w.document.write("<body style='padding:20px;font-family:sans-serif'>" + result + "</body>");
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      const data = JSON.parse(localStorage.getItem("eduContent") || "{}");
+      contentArea.innerHTML = data[section.value] || "";
+    });
+  
+
+const quizInput = document.getElementById("quizInput");
+const editor = document.getElementById("contentArea");
+
+section.addEventListener("change", () => {
+  const data = JSON.parse(localStorage.getItem("eduContent") || "{}");
+  const current = section.value;
+  if (current === "quiz") {
+    quizInput.style.display = "block";
+    editor.style.display = "none";
+    quizInput.value = data.quizRaw || "";
+  } else {
+    quizInput.style.display = "none";
+    editor.style.display = "block";
+    editor.innerHTML = data[current] || "";
+  }
+});
+
+function saveContent() {
+  const data = JSON.parse(localStorage.getItem("eduContent") || "{}");
+  if (section.value === "quiz") {
+    const raw = quizInput.value.trim();
+    data.quizRaw = raw;
+
+    const lines = raw.split('\n').filter(line => line.includes('-'));
+    const quiz = lines.map(line => {
+      const parts = line.split('-').map(p => p.trim());
+      const question = parts[0];
+      const options = [];
+      let correct = 0;
+      parts.slice(1).forEach((opt, i) => {
+        if (opt.startsWith('+')) {
+          options.push(opt.substring(1));
+          correct = i;
+        } else {
+          options.push(opt);
+        }
+      });
+      return { question, options, correct };
+    });
+
+    data.quiz = quiz;
+    localStorage.setItem("eduContent", JSON.stringify(data));
+    alert("✅ Тест сақталды!");
+  } else {
+    data[section.value] = editor.innerHTML;
+    localStorage.setItem("eduContent", JSON.stringify(data));
+    alert("✅ Контент сақталды!");
+  }
+}
+
+function clearContent() {
+  const data = JSON.parse(localStorage.getItem("eduContent") || "{}");
+  const current = section.value;
+  delete data[current];
+  localStorage.setItem("eduContent", JSON.stringify(data));
+  if (current === "quiz") {
+    quizInput.value = "";
+  } else {
+    editor.innerHTML = "";
+  }
+  alert("🧹 Контент тазартылды.");
+}
+
+
+function toggleEditorView() {
+  const section = document.getElementById("section").value;
+  const isQuiz = section === "quiz" || section === "Тест" || section === "test";
+  const testEditor = document.querySelector(".container h2")?.parentNode;
+  const contentEditor = document.querySelector(".content-editor");
+
+  if (testEditor && contentEditor) {
+    if (isQuiz) {
+      testEditor.style.display = "block";
+      contentEditor.style.display = "none";
+    } else {
+      testEditor.style.display = "none";
+      contentEditor.style.display = "block";
+
+      const data = JSON.parse(localStorage.getItem("eduContent") || "{}");
+      const editor = document.getElementById("contentArea");
+      editor.innerHTML = data[section] || "";
+    }
+  }
+}
+document.getElementById("section").addEventListener("change", toggleEditorView);
+window.addEventListener("DOMContentLoaded", toggleEditorView);
+
+function toggleEditorView() {
+  const section = document.getElementById("section").value;
+  const isTest = section === "quiz" || section === "Тест" || section === "test";
+  const testEditor = document.querySelector(".test-editor");
+  const contentEditor = document.querySelector(".content-editor");
+
+  if (testEditor && contentEditor) {
+    testEditor.style.display = isTest ? "block" : "none";
+    contentEditor.style.display = isTest ? "none" : "block";
+
+    if (!isTest) {
+      const data = JSON.parse(localStorage.getItem("eduContent") || "{}");
+      const editor = document.getElementById("contentArea");
+      editor.innerHTML = data[section] || "";
+    }
+  }
+}
+document.getElementById("section").addEventListener("change", toggleEditorView);
+window.addEventListener("DOMContentLoaded", toggleEditorView);
+
+function saveContent() {
+  const section = document.getElementById("section").value;
+  if (section === "quiz" || section === "Тест" || section === "test") return;
+
+  const data = JSON.parse(localStorage.getItem("eduContent") || "{}");
+  const editor = document.getElementById("contentArea");
+  const file = document.getElementById("fileInput").files[0];
+
+  if (!data[section]) data[section] = "";
+
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const url = e.target.result;
+      const ext = file.name.split('.').pop().toLowerCase();
+      let block = "";
+      if (["jpg", "png", "gif", "jpeg", "webp"].includes(ext)) {
+        block = `<img src='${url}' alt='' style='max-width:100%; margin:10px 0;' />`;
+      } else if (["mp4", "webm"].includes(ext)) {
+        if (url.includes('youtube.com') || url.includes('vimeo.com')) {
+          block = `<a href='${url}' target='_blank'>🎬 Видеоға өту</a>`;
+        } else {
+          block = `<video controls style='max-width:100%; margin:10px 0;'><source src='${url}' type='video/${ext}'></video>`;
+        }
+      } else {
+        block = `<a href='${url}' download='${file.name}'>📄 Скачать файл: ${file.name}</a>`;
+      }
+      editor.innerHTML += block;
+      data[section] = editor.innerHTML;
+      localStorage.setItem("eduContent", JSON.stringify(data));
+      document.getElementById("preview").innerHTML = "Контент сақталды.";
+    };
+    reader.readAsDataURL(file);
+  } else {
+    data[section] = editor.innerHTML;
+    localStorage.setItem("eduContent", JSON.stringify(data));
+    document.getElementById("preview").innerHTML = "Контент сақталды.";
+  }
+}
+
+function clearContent() {
+  const section = document.getElementById("section").value;
+  if (section === "quiz" || section === "Тест" || section === "test") return;
+
+  const data = JSON.parse(localStorage.getItem("eduContent") || "{}");
+  delete data[section];
+  localStorage.setItem("eduContent", JSON.stringify(data));
+  const editor = document.getElementById("contentArea");
+  if (editor) editor.innerHTML = "";
+  document.getElementById("preview").innerHTML = "Контент тазартылды.";
+}
+</script><body>
+<div class="editor content-editor">
+<h2>📚 Контент редакторы</h2>
+<label for="section">📂 Бөлімді таңдаңыз:</label>
+<select id="section">
+<option value="intro">📘 Курстың бөлімдері</option>
+<option value="dictionary">📚 Сөздік</option>
+<option value="video">🎬 Видео</option>
+<option value="practic">🛠 Практикалық бөлім</option>
+<option value="base">📝 Білім негізі</option>
+</select>
+<button onclick="clearContent()">🧹 Контентті тазарту</button>
+<div contenteditable="true" id="contentArea"></div>
+<input id="fileInput" type="file"/><div id="preview" style="margin-top: 10px;"></div>
+<button onclick="saveContent()">💾 Сақтау</button>
+<div class="test-editor"><div class="test-editor"><div class="container" style="margin-top: 60px;">
+<h2>📝 Тест жасау</h2>
+<input id="test-name" placeholder="Тест атауы" type="text"/>
+<input id="test-course" placeholder="Курс атауы" type="text"/>
+<div id="questions"></div>
+<div class="buttons">
+<button onclick="addQuestion()">Сұрақ қосу</button>
+<button onclick="saveTest()">Тест сақтау</button>
+<button onclick="clearAll()">Бәрін тазалау</button>
+</div>
+<h3 style="text-align:center; margin-top:40px;">📋 Тесттер</h3>
+<div id="test-list"></div>
+</div></div></div></div>
+<textarea id="quizInput" placeholder="Сұрақ - Жауап 1 - +Жауап 2 - Жауап 3" style="width: 100%; height: 120px; margin-top: 20px; display: none;"></textarea><script src="tests.js"></script></body>
+</html>

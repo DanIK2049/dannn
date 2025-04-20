@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="responsive.css">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Тест тапсыру </title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f0f4f3;
+      padding: 2rem;
+      margin: 0;
+      color: #333;
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: #2e7d32;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 0.75rem;
+      margin: 0.5rem 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+
+    .question {
+      margin-bottom: 1.5rem;
+      padding: 1rem;
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+    }
+
+    .question h3 {
+      margin: 0;
+      font-size: 1.2rem;
+    }
+
+    .answers {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .answer {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    label {
+      font-size: 1rem;
+    }
+
+    button {
+      padding: 1rem 2rem;
+      background-color: #2e7d32;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      margin-top: 1.5rem;
+      width: 100%;
+    }
+
+    button:hover {
+      background-color: #1b5e20;
+    }
+
+    .test-selection {
+      margin-bottom: 1.5rem;
+    }
+
+    .test-selection select {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    #certificate {
+      width: 100%;
+      max-width: 1000px;
+      margin: 2rem auto;
+      padding: 60px;
+      background-color: #fffbe6;
+      border: 6px double #2e7d32;
+      text-align: center;
+      font-family: Georgia, serif;
+      display: none;
+      box-sizing: border-box;
+      position: relative;
+    }
+
+    #cert-buttons button {
+      width: 100%;
+      max-width: 400px;
+      margin: 10px auto;
+      display: block;
+    }
+
+    .signature {
+      position: absolute;
+      bottom: 40px;
+      right: 60px;
+      font-size: 16px;
+    }
+  </style>
+<style>
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #f0fdf4;
+  color: #1b5e20;
+  margin: 0;
+  padding: 0;
+}
+header, footer {
+  background-color: #a5d6a7;
+  padding: 10px;
+  text-align: center;
+  font-weight: bold;
+}
+.container {
+  max-width: 900px;
+  margin: 20px auto;
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+button:hover {
+  background-color: #388e3c;
+}
+</style>
+
+<style>
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #f1fdf3;
+  color: #1b5e20;
+  margin: 0;
+  padding: 0;
+}
+header, footer {
+  background-color: #a5d6a7;
+  padding: 10px;
+  text-align: center;
+  font-weight: bold;
+}
+.container {
+  max-width: 960px;
+  margin: 40px auto;
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+button {
+  background-color: #43a047;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+button:hover {
+  background-color: #2e7d32;
+}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Тест тапсыру</h1>
+<div class="test-selection">
+<h2>Тест түрін таңдаңыз</h2>
+<select id="test-select" onchange="loadTest()">
+<option value="">Тест түрін таңдаңыз</option>
+</select>
+</div>
+<div id="test-form"></div>
+<div id="certificate">
+<h1 style="color: #2e7d32; font-size: 32px; margin-bottom: 20px;">СЕРТИФИКАТ</h1>
+<p style="font-size: 20px; margin-bottom: 40px;">Осы СЕРТИФИКАТ</p>
+<p id="cert-name" style="font-size: 26px; font-weight: bold; margin-bottom: 20px;"></p>
+<p style="font-size: 20px;">Курсты сәтті аяқтағанын білдіреді</p>
+<p id="cert-course" style="font-size: 22px; font-style: italic; margin-bottom: 40px;"></p>
+<p style="font-size: 18px;">Тапсырылған күні: <span id="cert-date"></span></p>
+<div id="cert-buttons">
+<button onclick="downloadCertificate()">Сертификат жүктеу</button>
+<button onclick="returnHome()">Басты бетке оралу</button>
+</div>
+<div class="signature">
+        ____________________<br/>
+<span style="font-style: italic;">Мұғалімнің қолтаңбасы</span>
+</div>
+</div>
+</div>
+<script>
+    let studentName = "";
+    let testData = [];
+
+    function loadTests() {
+      const allTests = JSON.parse(localStorage.getItem("tests")) || [];
+      const testSelect = document.getElementById("test-select");
+
+      testSelect.innerHTML = "<option value=''>Тест түрін таңдаңыз</option>";
+
+      allTests.forEach((test, index) => {
+        const option = document.createElement("option");
+        option.value = index;
+        option.textContent = test.name;
+        testSelect.appendChild(option);
+      });
+    }
+
+    function loadTest() {
+      const selectedTestIndex = document.getElementById("test-select").value;
+      if (selectedTestIndex === "") return;
+
+      const allTests = JSON.parse(localStorage.getItem("tests")) || [];
+      const selectedTest = allTests[selectedTestIndex];
+      testData = selectedTest.data;
+
+      const testForm = document.getElementById("test-form");
+      testForm.innerHTML = "";
+
+      const nameInput = document.createElement("input");
+      nameInput.type = "text";
+      nameInput.placeholder = "Аты жөніңізді енгізіңіз";
+      nameInput.oninput = (e) => { studentName = e.target.value; };
+      testForm.appendChild(nameInput);
+
+      testData.forEach((question, i) => {
+        const questionDiv = document.createElement("div");
+        questionDiv.className = "question";
+        const questionTitle = document.createElement("h3");
+        questionTitle.textContent = `${i + 1}. ${question.question}`;
+        questionDiv.appendChild(questionTitle);
+
+        const answersDiv = document.createElement("div");
+        answersDiv.className = "answers";
+
+        question.answers.forEach((answer, j) => {
+          const answerDiv = document.createElement("div");
+          answerDiv.className = "answer";
+
+          const input = document.createElement("input");
+          input.type = "radio";
+          input.name = `q${i}`;
+          input.value = j;
+          const label = document.createElement("label");
+          label.textContent = answer;
+
+          answerDiv.appendChild(input);
+          answerDiv.appendChild(label);
+          answersDiv.appendChild(answerDiv);
+        });
+
+        questionDiv.appendChild(answersDiv);
+        testForm.appendChild(questionDiv);
+      });
+
+      const btn = document.createElement("button");
+      btn.textContent = "Тестті аяқтау";
+      btn.onclick = () => checkAnswers(testData, selectedTest.course);
+      testForm.appendChild(btn);
+    }
+
+    function checkAnswers(data, course) {
+      if (!studentName.trim()) {
+        alert("Аты жөніңізді енгізіңіз.");
+        return;
+      }
+
+      const completedUsers = JSON.parse(localStorage.getItem("completedUsers") || "[]");
+
+      if (completedUsers.includes(studentName.trim())) {
+        alert("Сіз тестті сәтті тапсырдыңыз.");
+        return;
+      }
+
+      let score = 0;
+      data.forEach((q, i) => {
+        const radios = document.getElementsByName(`q${i}`);
+        for (let r of radios) {
+          if (r.checked && parseInt(r.value) === q.correct) {
+            score++;
+          }
+        }
+      });
+
+      const passed = score / data.length >= 0.5;
+      if (passed) {
+        completedUsers.push(studentName.trim());
+        localStorage.setItem("completedUsers", JSON.stringify(completedUsers));
+
+        const history = JSON.parse(localStorage.getItem("testHistory") || "[]");
+        history.push({
+          name: studentName.trim(),
+          course,
+          date: new Date().toLocaleDateString("ru-RU"),
+          score: `${score}/${data.length}`
+        });
+        localStorage.setItem("testHistory", JSON.stringify(history));
+
+        showCertificate(course);
+      } else {
+        alert(`Вы не прошли тест. Результат: ${score} из ${data.length}`);
+      }
+    }
+
+    function showCertificate(course) {
+      document.getElementById("test-form").style.display = "none";
+      const cert = document.getElementById("certificate");
+
+      document.getElementById("cert-name").innerText = `${studentName}`;
+      document.getElementById("cert-course").innerText = course;
+
+      const today = new Date();
+      const formattedDate = today.toLocaleDateString("ru-RU");
+      document.getElementById("cert-date").innerText = formattedDate;
+
+      cert.style.display = "block";
+    }
+
+    function downloadCertificate() {
+      const cert = document.getElementById("certificate");
+      const buttons = document.getElementById("cert-buttons");
+      buttons.style.display = "none";
+
+      html2canvas(cert, {
+        scale: 2,
+        useCORS: true
+      }).then(canvas => {
+        const imgData = canvas.toDataURL("image/png");
+
+        window.jspdf = window.jspdf || window.jspdf.jsPDF;
+        const jsPDF = window.jspdf.jsPDF;
+
+        const pdf = new jsPDF({
+          orientation: "landscape",
+          unit: "mm",
+          format: "a4"
+        });
+
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+
+        pdf.addImage(imgData, "PNG", 0, 0, pageWidth, pageHeight);
+        pdf.save("certificate.pdf");
+
+        buttons.style.display = "block";
+      });
+    }
+
+    function returnHome() {
+      window.location.href = "index.html";
+    }
+
+    loadTests();
+  </script>
+</body>
+</html>
