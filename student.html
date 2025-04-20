@@ -61,12 +61,15 @@
     .answer {
       display: flex;
       align-items: center;
+      justify-content: flex-start;
       gap: 10px;
       padding: 10px;
       border-radius: 6px;
       background-color: #f1f1f1;
       font-size: 1rem;
       cursor: pointer;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     button {
@@ -207,8 +210,13 @@
           input.name = `q${i}`;
           input.value = j;
 
+          const span = document.createElement("span");
+          span.textContent = answer;
+          span.style.flex = "1";
+          span.style.wordBreak = "break-word";
+
           label.appendChild(input);
-          label.appendChild(document.createTextNode(answer));
+          label.appendChild(span);
           answersDiv.appendChild(label);
         });
 
@@ -284,20 +292,11 @@
       const buttons = document.getElementById("cert-buttons");
       buttons.style.display = "none";
 
-      html2canvas(cert, {
-        scale: 2,
-        useCORS: true
-      }).then(canvas => {
+      html2canvas(cert, { scale: 2, useCORS: true }).then(canvas => {
         const imgData = canvas.toDataURL("image/png");
 
-        window.jspdf = window.jspdf || window.jspdf.jsPDF;
         const jsPDF = window.jspdf.jsPDF;
-
-        const pdf = new jsPDF({
-          orientation: "landscape",
-          unit: "mm",
-          format: "a4"
-        });
+        const pdf = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
 
         const pageWidth = pdf.internal.pageSize.getWidth();
         const pageHeight = pdf.internal.pageSize.getHeight();
