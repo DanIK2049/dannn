@@ -52,29 +52,25 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 10px 14px;
+    padding: 10px 12px;
     border-radius: 8px;
     background-color: #f1f1f1;
     font-size: 1rem;
-    cursor: pointer;
-    box-sizing: border-box;
     width: 100%;
-    white-space: normal;
-    word-break: break-word;
-  }
-
-  .answer:hover {
-    background-color: #e0e0e0;
+    box-sizing: border-box;
   }
 
   .answer input[type="radio"] {
     margin: 0;
+    flex-shrink: 0;
   }
 
   .answer span {
-    display: inline-block;
+    display: block;
     white-space: normal;
     word-break: break-word;
+    line-height: 1.4;
+    margin: 0;
     flex: 1;
   }
 }
