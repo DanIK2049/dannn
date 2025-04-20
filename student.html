@@ -4,7 +4,6 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Тест тапсыру</title>
-  <link rel="stylesheet" href="responsive.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
@@ -15,10 +14,12 @@
       margin: 0;
       color: #333;
     }
+
     h1, h2 {
       text-align: center;
       color: #2e7d32;
     }
+
     .container {
       max-width: 800px;
       margin: 0 auto;
@@ -27,6 +28,7 @@
       border-radius: 12px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
+
     input[type="text"] {
       width: 100%;
       padding: 0.75rem;
@@ -35,6 +37,7 @@
       border: 1px solid #ccc;
       box-sizing: border-box;
     }
+
     .question {
       margin-bottom: 1.5rem;
       padding: 1rem;
@@ -42,38 +45,37 @@
       border-radius: 8px;
       border: 1px solid #ddd;
     }
+
     .question h3 {
       margin: 0 0 0.5rem;
       font-size: 1.2rem;
     }
+
     .answers {
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
     }
+
     .answer {
       display: flex;
       align-items: center;
-      gap: 8px;
-      padding: 10px 12px;
+      gap: 10px;
+      padding: 10px 14px;
       border-radius: 8px;
       background-color: #f1f1f1;
       font-size: 1rem;
+      cursor: pointer;
       width: 100%;
       box-sizing: border-box;
     }
-    .answer input[type="radio"] {
-      margin: 0;
-      flex-shrink: 0;
-    }
+
     .answer span {
-      display: block;
+      flex-grow: 1;
       white-space: normal;
       word-break: break-word;
-      line-height: 1.4;
-      margin: 0;
-      flex: 1;
     }
+
     button {
       padding: 1rem 2rem;
       background-color: #2e7d32;
@@ -85,12 +87,15 @@
       margin-top: 1.5rem;
       width: 100%;
     }
+
     button:hover {
       background-color: #1b5e20;
     }
+
     .test-selection {
       margin-bottom: 1.5rem;
     }
+
     .test-selection select {
       width: 100%;
       padding: 0.75rem;
@@ -98,6 +103,7 @@
       border-radius: 6px;
       border: 1px solid #ccc;
     }
+
     #certificate {
       width: 100%;
       max-width: 1000px;
@@ -111,17 +117,42 @@
       box-sizing: border-box;
       position: relative;
     }
+
     #cert-buttons button {
       width: 100%;
       max-width: 400px;
       margin: 10px auto;
       display: block;
     }
+
     .signature {
       position: absolute;
       bottom: 40px;
       right: 60px;
       font-size: 16px;
+    }
+
+    /* ✅ Responsive Fix */
+    @media (max-width: 768px) {
+      .answer {
+        flex-wrap: nowrap;
+        overflow: hidden;
+      }
+
+      .answer input[type="radio"] {
+        flex-shrink: 0;
+        width: 20px;
+        height: 20px;
+        margin: 0;
+      }
+
+      .answer span {
+        white-space: normal;
+        word-break: break-word;
+        flex-grow: 1;
+        flex-shrink: 1;
+        min-width: 0;
+      }
     }
   </style>
 </head>
@@ -231,6 +262,7 @@
       }
 
       const completedUsers = JSON.parse(localStorage.getItem("completedUsers") || "[]");
+
       if (completedUsers.includes(studentName.trim())) {
         alert("Сіз тестті сәтті тапсырдыңыз.");
         return;
@@ -268,10 +300,16 @@
 
     function showCertificate(course) {
       document.getElementById("test-form").style.display = "none";
-      document.getElementById("cert-name").innerText = studentName;
+      const cert = document.getElementById("certificate");
+
+      document.getElementById("cert-name").innerText = `${studentName}`;
       document.getElementById("cert-course").innerText = course;
-      document.getElementById("cert-date").innerText = new Date().toLocaleDateString("ru-RU");
-      document.getElementById("certificate").style.display = "block";
+
+      const today = new Date();
+      const formattedDate = today.toLocaleDateString("ru-RU");
+      document.getElementById("cert-date").innerText = formattedDate;
+
+      cert.style.display = "block";
     }
 
     function downloadCertificate() {
@@ -281,10 +319,16 @@
 
       html2canvas(cert, { scale: 2, useCORS: true }).then(canvas => {
         const imgData = canvas.toDataURL("image/png");
+
         const jsPDF = window.jspdf.jsPDF;
         const pdf = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
-        pdf.addImage(imgData, "PNG", 0, 0, pdf.internal.pageSize.getWidth(), pdf.internal.pageSize.getHeight());
+
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+
+        pdf.addImage(imgData, "PNG", 0, 0, pageWidth, pageHeight);
         pdf.save("certificate.pdf");
+
         buttons.style.display = "block";
       });
     }
