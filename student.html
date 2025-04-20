@@ -15,12 +15,10 @@
       margin: 0;
       color: #333;
     }
-
     h1, h2 {
       text-align: center;
       color: #2e7d32;
     }
-
     .container {
       max-width: 800px;
       margin: 0 auto;
@@ -29,7 +27,6 @@
       border-radius: 12px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
-
     input[type="text"] {
       width: 100%;
       padding: 0.75rem;
@@ -38,7 +35,6 @@
       border: 1px solid #ccc;
       box-sizing: border-box;
     }
-
     .question {
       margin-bottom: 1.5rem;
       padding: 1rem;
@@ -46,22 +42,19 @@
       border-radius: 8px;
       border: 1px solid #ddd;
     }
-
     .question h3 {
-      margin: 0;
+      margin: 0 0 0.5rem;
       font-size: 1.2rem;
     }
-
     .answers {
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
     }
-
     .answer {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       padding: 10px 14px;
       border-radius: 8px;
       background-color: #f1f1f1;
@@ -69,15 +62,12 @@
       cursor: pointer;
       width: 100%;
       box-sizing: border-box;
+    }
+    .answer span {
+      flex-grow: 1;
       white-space: normal;
       word-break: break-word;
     }
-
-    .answer input[type="radio"] {
-      margin: 0;
-      transform: scale(1.2);
-    }
-
     button {
       padding: 1rem 2rem;
       background-color: #2e7d32;
@@ -89,15 +79,12 @@
       margin-top: 1.5rem;
       width: 100%;
     }
-
     button:hover {
       background-color: #1b5e20;
     }
-
     .test-selection {
       margin-bottom: 1.5rem;
     }
-
     .test-selection select {
       width: 100%;
       padding: 0.75rem;
@@ -105,7 +92,6 @@
       border-radius: 6px;
       border: 1px solid #ccc;
     }
-
     #certificate {
       width: 100%;
       max-width: 1000px;
@@ -119,14 +105,12 @@
       box-sizing: border-box;
       position: relative;
     }
-
     #cert-buttons button {
       width: 100%;
       max-width: 400px;
       margin: 10px auto;
       display: block;
     }
-
     .signature {
       position: absolute;
       bottom: 40px;
@@ -208,35 +192,24 @@
         answersDiv.className = "answers";
 
         question.answers.forEach((answer, j) => {
-  const label = document.createElement("label");
-  label.className = "answer";
-  label.style.display = "flex";
-  label.style.alignItems = "center";
-  label.style.gap = "10px";
-  label.style.padding = "10px 14px";
-  label.style.borderRadius = "8px";
-  label.style.backgroundColor = "#f1f1f1";
-  label.style.fontSize = "1rem";
-  label.style.cursor = "pointer";
-  label.style.boxSizing = "border-box";
-  label.style.width = "100%";
+          const label = document.createElement("label");
+          label.className = "answer";
 
-  const input = document.createElement("input");
-  input.type = "radio";
-  input.name = `q${i}`;
-  input.value = j;
+          const input = document.createElement("input");
+          input.type = "radio";
+          input.name = `q${i}`;
+          input.value = j;
 
-  const span = document.createElement("span");
-  span.textContent = answer;
-  span.style.flexGrow = "1";                // <<< текст занимает оставшееся место
-  span.style.whiteSpace = "normal";         // <<< разрешаем перенос, но по словам
-  span.style.wordBreak = "break-word";      // <<< переносим слова корректно
+          const span = document.createElement("span");
+          span.textContent = answer;
+          span.style.flexGrow = "1";
+          span.style.whiteSpace = "normal";
+          span.style.wordBreak = "break-word";
 
-  label.appendChild(input);
-  label.appendChild(span);
-  answersDiv.appendChild(label);
-});
-
+          label.appendChild(input);
+          label.appendChild(span);
+          answersDiv.appendChild(label);
+        });
 
         questionDiv.appendChild(answersDiv);
         testForm.appendChild(questionDiv);
@@ -255,6 +228,7 @@
       }
 
       const completedUsers = JSON.parse(localStorage.getItem("completedUsers") || "[]");
+
       if (completedUsers.includes(studentName.trim())) {
         alert("Сіз тестті сәтті тапсырдыңыз.");
         return;
@@ -296,7 +270,10 @@
 
       document.getElementById("cert-name").innerText = `${studentName}`;
       document.getElementById("cert-course").innerText = course;
-      document.getElementById("cert-date").innerText = new Date().toLocaleDateString("ru-RU");
+
+      const today = new Date();
+      const formattedDate = today.toLocaleDateString("ru-RU");
+      document.getElementById("cert-date").innerText = formattedDate;
 
       cert.style.display = "block";
     }
@@ -308,12 +285,16 @@
 
       html2canvas(cert, { scale: 2, useCORS: true }).then(canvas => {
         const imgData = canvas.toDataURL("image/png");
+
         const jsPDF = window.jspdf.jsPDF;
         const pdf = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+
         const pageWidth = pdf.internal.pageSize.getWidth();
         const pageHeight = pdf.internal.pageSize.getHeight();
+
         pdf.addImage(imgData, "PNG", 0, 0, pageWidth, pageHeight);
         pdf.save("certificate.pdf");
+
         buttons.style.display = "block";
       });
     }
